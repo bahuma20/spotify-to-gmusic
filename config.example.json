@@ -1,0 +1,15 @@
+{
+  "gmusic": {
+    "email":"john.doe@gmail.com",
+    "password": "sdfkj409s4lkf2",
+    "targetPlaylistName": "Imported Playlist"
+  },
+  "spotify": {
+    "userId": "fl49sj3l23",
+    "playlistId": "2RBsefeBAZfEPgOF8xZl5M",
+    "oauth": {
+      "clientId": "77dbee4517423f7d638a0653d",
+      "clientSecret": "6eb40ed352b749c945601aef780cd9b"
+    }
+  }
+}
