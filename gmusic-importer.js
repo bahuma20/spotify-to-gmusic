@@ -58,13 +58,17 @@ let createPlaylistWithTracks = function(playlistName, songList) {
 
             songList.forEach(songData => {
                 searchSong(`${songData.artist} - ${songData.album} - ${songData.title}`).then(song => {
-                    pm.addTrackToPlayList([song.track.storeId], playlistId, function(err, resp) {
-                        if (err) {
-                            return console.log(err);
-                        }
-
-                        console.log(`[Success] Imported "${songData.artist} - ${songData.album} - ${songData.title}"`);
-                    });
+                    if (song) {
+                        pm.addTrackToPlayList([song.track.storeId], playlistId, function(err, resp) {
+                            if (err) {
+                                return console.log(err);
+                            }
+    
+                            console.log(`[Success] Imported "${songData.artist} - ${songData.album} - ${songData.title}"`);
+                        });
+                    } else {
+                        console.log('[Error] Song is undefined for search "'+ `${songData.artist} - ${songData.album} - ${songData.title}` +'"')
+                    }
                 }).catch(e => console.log('[Error] ' + e));
             });
         });

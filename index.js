@@ -47,13 +47,14 @@ app.get('/auth/spotify/callback', function (req, res) {
         });
 });
 
-app.get('/', function (req, res) {
+app.get('/', async function (req, res) {
     let api = new SpotifyWebApi();
 
     api.setAccessToken(req.session.spotifyAccessToken);
 
+    let getAllPlaylistTracks = async (start = 0) => {
+        let response = await api.getPlaylistTracks(config.spotify.userId, config.spotify.playlistId, { limit: 100, offset: start });
 
-    api.getPlaylistTracks(config.spotify.userId, config.spotify.playlistId).then(response => {
         let songList = [];
 
         response.body.items.forEach(({track}) => {
@@ -64,10 +65,20 @@ app.get('/', function (req, res) {
             songList.push({artist, album, title})
         });
 
-        // console.log(songList);
-        console.log('Exported Spotify playlist. Starting Google Play Music import');
-        gmusicImporter(config.gmusic.targetPlaylistName, songList);
-    });
+        if (response.body.total > (start + 100)) {
+            let additionalSongs = await getAllPlaylistTracks(start+100);
+            songList = songList.concat(additionalSongs);
+            return songList;
+        } else {
+            return songList;
+        }
+    }
+
+    let songList = await getAllPlaylistTracks();
+
+    console.log('Exported Spotify playlist. Starting Google Play Music import');
+    gmusicImporter(config.gmusic.targetPlaylistName, songList);
+
 
     res.send('Imported! Check console output for errors!');
 });
